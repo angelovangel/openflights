@@ -2,7 +2,7 @@
 drawbasemap <- function() {
  
   leaflet(options = leafletOptions(zoomControl = FALSE,  # these options are just for fun and to test if they are working in R
-                                   minZoom = 2, 
+                                   minZoom = 3, 
                                    maxZoom = 10, 
                                    zoomDelta = 0.5, 
                                    zoomSnap = 0.5, 
@@ -24,7 +24,7 @@ drawMainCircles <- function() {
                 #weight = 30,
                 radius = ~n*100, # is there a better, non-linear scaling?
                 fillOpacity = 0.6,
-                label = ~paste0(Name, " (", Country, ") ", n, " flights"),
+                label = ~paste0(Name, " (", Country, ") ", n, " routes"),
                 options = pathOptions(pane = "oldcircles")
    )
 }

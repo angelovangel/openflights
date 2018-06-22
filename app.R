@@ -86,7 +86,7 @@ ui <- bootstrapPage(
   
   absolutePanel(bottom = 15, left = 5, width = "15%",
                 h5(radioButtons("radio", label = "Routes selection mode",
-                             choices = list("Keep routes" = 1, "Clear routes" = 2)),
+                             choices = list("Keep routes" = 1, "Clear routes" = 2), selected = 2),
                    actionButton("clearall", "Clear all routes"),
                              style = "color:grey;")
                 )
@@ -109,14 +109,27 @@ server <- function(input, output, session) {
   })
   
   # observers ##############################
-  # observers to draw routes when airport is clicked or airline is selected
+  # draw main circles, eventually this function can be extended to change the sizes according to, for example, airline selected
   observe({
+    if(is.null(input$airline))
     drawMainCircles()
   })
   
+  # the clickdata reactive stores clicked airports, I am using it like this because I want to set it to NULL whenever needed (e.g. when clearall or when airline is selcted)
+  clickdata <- reactiveValues(click = NULL)
+  observeEvent(input$map_shape_click, {
+    clickdata$click <- input$map_shape_click
+    print(clickdata$click)
+  })
+  # if clearall is pressed, set clickdata$click to NULL
+  observeEvent(input$clearall, {
+    clickdata$click <- NULL
+    print(clickdata$click)
+  })
   
+  # observers to draw routes when airport is clicked or airline is selected
   observe({
-    event <- input$map_shape_click
+    event <- clickdata$click
     if(is.null(event))
       return()
     
@@ -130,6 +143,7 @@ server <- function(input, output, session) {
   
   observe({
     airlineEvent <- input$airline
+    clickdata$click <- NULL
     if(is.null(airlineEvent))
       return(leafletProxy("map") %>% clearGroup("routes3"))
     
@@ -138,17 +152,6 @@ server <- function(input, output, session) {
     })
   })
   
-  
-  clickdata <- reactiveValues(click = NULL)
-  observeEvent(input$map_shape_click, {
-    clickdata$click <- input$map_shape_click
-    print(clickdata$click)
-    })
-  
-  observeEvent(input$clearall, {
-    clickdata$click <- NULL
-    print(clickdata$click)
-    })
   
   #observer to print clicked airport or airline info
   observe({

@@ -67,37 +67,28 @@ showAirlineInfo <- function(x, filters) {
   if(is.null(x))
     return(paste0("Click on an airport on the map or select an airline to see the routes"))
   
-  if(is.null(filters)) {
-    selected <- airlines.routes.summary %>% filter(Airline == x)
-    nroutes <- nrow(selected)
-    ncities <- selected %>% count(City) %>% nrow()
-    ncountries <- selected %>% count(Country) %>% nrow()
-    name <- selected$Name[1]
-  
-    paste0(tags$b(name), tags$br(), tags$br(), 
-           tags$b(nroutes), " routes to", tags$br(),
-           tags$b(ncities), " cities in", tags$br(),
-           tags$b(ncountries), " countries")
-  } else {
-    selected <- airlines.routes.summary %>% filter(Airline == x, Source_airport == filters)
-    nroutes <- nrow(selected)
-    ncities <- selected %>% count(City) %>% nrow()
-    ncountries <- selected %>% count(Country) %>% nrow()
-    name <- selected$Name[1]
+  # with if else, depending on if airport is clicked or not
+    if(is.null(filters)) {selected <- airlines.routes.summary %>% filter(Airline == x)} else {
+                          selected <- airlines.routes.summary %>% filter(Airline == x, Source_airport == filters)}
     
+    nroutes <- nrow(selected)
+    ncities <- selected %>% count(City) %>% nrow()
+    ncountries <- selected %>% count(Country) %>% nrow()
+    name <- selected$Name[1]
+    airportname <- airports[airports$IATA == filters, ]$Name # get the full name using the IATA code
+       
     paste0(tags$b(name), tags$br(), tags$br(), 
-           "has ", tags$b(nroutes), " routes from ", tags$br(),
-           tags$b(filters), " to ",
-           tags$b(ncities), " cities in", tags$br(),
-           tags$b(ncountries), " countries")
- }
+                tags$b(nroutes), " routes from ", tags$br(),
+                tags$b(airportname), " to ",
+                tags$b(ncities), " cities in", tags$br(),
+                tags$b(ncountries), " countries")
 }
   
   
 drawroutesAirportClear <- function(x, filters) {
   if(is.null(filters))
     dataforPolylines <- routesx(x) else {
-      dataforPolylines <- routesx(x) %>% dplyr::filter(Airline %in% filters)
+      dataforPolylines <- routesx(x) %>% dplyr::filter(Airline %in% last(filters)) # last(filters) because only the last selected airline should be used
     }
   #this is to get a IATA codes for all destinations a "x" has and then join with the df containing "n" (number of outgoing routes)
   #destinations <- airports.info.destination[airports.info.destination$Source_airport == x, ]$Destination_airport
@@ -138,9 +129,9 @@ drawroutesAirportClear <- function(x, filters) {
 drawroutesAirportKeep <- function(x, filters) {
   if(is.null(filters))
     dataforPolylines <- routesx(x) else {
-  dataforPolylines <- routesx(x) %>% dplyr::filter(Airline %in% filters)
+  dataforPolylines <- routesx(x) %>% dplyr::filter(Airline %in% last(filters))
     }
-  destinations <- airports.info.destination[airports.info.destination$Source_airport == x, ]$Destination_airport
+  destinations <- dataforPolylines$airport %>% unique()
   dataforCircles <- airports.source.summary[airports.source.summary$Source_airport %in% destinations, ] %>%
                       filter(!is.na(Longitude) | !is.na(Latitude))
   
@@ -180,12 +171,33 @@ drawroutesAirlines <- function(x) {
   datax <- airlinesx(x)
   splitdf <- split(datax, datax$Airline)
   colors <- terrain_hcl(length(splitdf), alpha = 0.8)
-  
+  # dataforCircles <- airports.info.destination[airports.info.destination$Airline %in% x, ] %>% 
+  #                     group_by(Airline) %>% count(Source_airport) %>% 
+  #                     left_join(airports, by = c("Source_airport" = "IATA"))
+  # 
   
   leafletProxy("map") %>%
     clearGroup("routes1") %>%
     clearGroup("routes2") %>%
     clearGroup("routes3")
+    
+    # clearGroup("mainCircles") %>%
+    # 
+    # addMapPane("airlinecircles", zIndex = 405) %>%
+    # addCircles(group = "routes3",
+    #            layerId = ~Source_airport,
+    #            lng = ~Longitude, lat = ~Latitude,
+    #            stroke = F,
+    #            fillColor = "green",
+    #            #weight = 3,
+    #            #color = "green",
+    #            #opacity = 0.5,
+    #            radius = ~n*500, 
+    #            fillOpacity = 0.6,
+    #            label = ~paste0(Name, " (", Country, ") ", n, " routes"),
+    #            data = dataforCircles,
+    #            options = pathOptions(pane = "airlinecircles")
+    # )
   # 
   #actual drawing of polylines
   map2(splitdf, colors, function(y, z) {
