@@ -112,7 +112,7 @@ server <- function(input, output, session) {
   # draw main circles, eventually this function can be extended to change the sizes according to, for example, airline selected
   observe({
     if(is.null(input$airline))
-    drawMainCircles()
+    drawMainCircles(size = ~n*100)
   })
   
   # the clickdata reactive stores clicked airports, I am using it like this because I want to set it to NULL whenever needed (e.g. when clearall or when airline is selcted)

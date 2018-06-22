@@ -12,7 +12,7 @@ drawbasemap <- function() {
 }
 
 # function to draw main circles, the size of the circles corresponds to the number of outgoing routes from that airport
-drawMainCircles <- function() {
+drawMainCircles <- function(size) {
   leafletProxy("map", data =  airports.source.summary) %>%
     clearGroup("mainCircles") %>%
      addMapPane("oldcircles", zIndex = 420) %>% #this pane is always on top so that the circles can be clicked
@@ -22,7 +22,7 @@ drawMainCircles <- function() {
                 stroke = F,
                 fillColor = "white",
                 #weight = 30,
-                radius = ~n*100, # is there a better, non-linear scaling?
+                radius = size, # is there a better, non-linear scaling?
                 fillOpacity = 0.6,
                 label = ~paste0(Name, " (", Country, ") ", n, " routes"),
                 options = pathOptions(pane = "oldcircles")
