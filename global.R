@@ -63,20 +63,34 @@ showAirportInfo <- function(x) {
 }
 
 # function to print Airline info
-showAirlineInfo <- function(x) {
+showAirlineInfo <- function(x, filters) {
   if(is.null(x))
     return(paste0("Click on an airport on the map or select an airline to see the routes"))
   
-  selected <- airlines.routes.summary %>% filter(Airline == x)
-  nroutes <- nrow(selected)
-  ncities <- selected %>% count(City) %>% nrow()
-  ncountries <- selected %>% count(Country) %>% nrow()
-  name <- selected$Name[1]
+  if(is.null(filters)) {
+    selected <- airlines.routes.summary %>% filter(Airline == x)
+    nroutes <- nrow(selected)
+    ncities <- selected %>% count(City) %>% nrow()
+    ncountries <- selected %>% count(Country) %>% nrow()
+    name <- selected$Name[1]
   
-  paste0(tags$b(name), tags$br(), tags$br(), 
-         tags$b(nroutes), " routes to", tags$br(),
-         tags$b(ncities), " cities in", tags$br(),
-         tags$b(ncountries), " countries")
+    paste0(tags$b(name), tags$br(), tags$br(), 
+           tags$b(nroutes), " routes to", tags$br(),
+           tags$b(ncities), " cities in", tags$br(),
+           tags$b(ncountries), " countries")
+  } else {
+    selected <- airlines.routes.summary %>% filter(Airline == x, Source_airport == filters)
+    nroutes <- nrow(selected)
+    ncities <- selected %>% count(City) %>% nrow()
+    ncountries <- selected %>% count(Country) %>% nrow()
+    name <- selected$Name[1]
+    
+    paste0(tags$b(name), tags$br(), tags$br(), 
+           "has ", tags$b(nroutes), " routes from ", tags$br(),
+           tags$b(filters), " to ",
+           tags$b(ncities), " cities in", tags$br(),
+           tags$b(ncountries), " countries")
+ }
 }
   
   
@@ -112,7 +126,7 @@ drawroutesAirportClear <- function(x, filters) {
               weight = 3,
               color = "orange",
               opacity = 0.5,
-              radius = ~n*120,
+              radius = ~n*100,
               fillOpacity = 1,
               data = dataforCircles,
               options = pathOptions(pane = "newcircles")
@@ -149,7 +163,7 @@ drawroutesAirportKeep <- function(x, filters) {
                  weight = 3,
                  color = "orange",
                  opacity = 0.5,
-                 radius = ~n*120, # a bit bigger than the main circles, which are n * 100
+                 radius = ~n*100, # a bit bigger than the main circles, which are n * 100?
                  fillOpacity = 1,
                  data = dataforCircles,
                  options = pathOptions(pane = "newcircles")

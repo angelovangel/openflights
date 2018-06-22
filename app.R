@@ -47,7 +47,7 @@ airports.info.destination <- routes %>%
                               left_join(airports, by = c("Destination_airport" = "IATA"))
                               
 # summary for airlines
-airlines.routes.summary <- airports.info.destination[, c("Airline", "City", "Country")] %>% 
+airlines.routes.summary <- airports.info.destination[, c("Airline","Source_airport" ,"City", "Country")] %>% 
                               left_join(airlines[, c("Name", "IATA")], by = c("Airline" = "IATA")) %>%
                               filter(!is.na(City))
 
@@ -110,6 +110,10 @@ server <- function(input, output, session) {
   
   # observers ##############################
   # observers to draw routes when airport is clicked or airline is selected
+  observe({
+    drawMainCircles()
+  })
+  
   
   observe({
     event <- input$map_shape_click
@@ -134,15 +138,26 @@ server <- function(input, output, session) {
     })
   })
   
+  
+  clickdata <- reactiveValues(click = NULL)
+  observeEvent(input$map_shape_click, {
+    clickdata$click <- input$map_shape_click
+    print(clickdata$click)
+    })
+  
+  observeEvent(input$clearall, {
+    clickdata$click <- NULL
+    print(clickdata$click)
+    })
+  
   #observer to print clicked airport or airline info
   observe({
   output$airportSummary <- renderText({
-    event <- input$map_shape_click
-    
-    ifelse(!is.null(input$airline),
-            showAirlineInfo(last(input$airline)),
-              showAirportInfo(event$id)
-    )
+     event <- clickdata$click
+     ifelse(!is.null(input$airline),
+             showAirlineInfo(x = last(input$airline), filters = event$id),
+               showAirportInfo(event$id)
+     )
  
     })
   })
