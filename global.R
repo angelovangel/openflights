@@ -55,7 +55,7 @@ showAirportInfo <- function(x) {
   ncountries <- selected %>% count(Country) %>% nrow()
   nairlines <- selected %>% count(Airline) %>% nrow()
   
-  paste0(tags$b(name), tags$br(), tags$br(),
+  paste0(tags$h4(tags$b(name)), tags$br(),
          tags$b(nroutes), " routes to", tags$br(), 
          tags$b(ncities), " cities in", tags$br(),
          tags$b(ncountries), " countries, operated by", tags$br(),
@@ -76,12 +76,13 @@ showAirlineInfo <- function(x, filters) {
     ncountries <- selected %>% count(Country) %>% nrow()
     name <- selected$Name[1]
     airportname <- airports[airports$IATA == filters, ]$Name # get the full name using the IATA code
-       
-    paste0(tags$b(name), tags$br(), tags$br(), 
+    #tags$span(style = paste("color:", col), word)
+    
+    paste0(tags$h4(tags$b(name)), tags$br(),
                 tags$b(nroutes), " routes from ", tags$br(),
-                tags$b(airportname), " to ",
+                tags$b(airportname), " to ", tags$br(),
                 tags$b(ncities), " cities in", tags$br(),
-                tags$b(ncountries), " countries")
+                tags$span(style = "color: red", tags$b(ncountries), " countries")) # this is working to change color
 }
   
   
@@ -107,7 +108,8 @@ drawroutesAirportClear <- function(x, filters) {
                          weight = 0.4,
                          opacity = 0.6,
                          color = "orange",
-                         data = dataforPolylines 
+                         options = pathOptions(interactive = FALSE),
+                         data = dataforPolylines
     ) %>%
     addCircles(group = "routes1",
                #layerId = ~Destination_airport,
@@ -144,7 +146,8 @@ drawroutesAirportKeep <- function(x, filters) {
                          weight = 0.4,
                          opacity = 0.6,
                          color = "orange",
-                         data = dataforPolylines
+                         data = dataforPolylines,
+                         options = pathOptions(interactive = FALSE)
     ) %>%
       addCircles(group = "routes2",
                  
@@ -211,7 +214,8 @@ drawroutesAirlines <- function(x) {
                          weight = 0.3,
                          opacity = 0.3,
                          color = z,
-                         data = y)
+                         data = y,
+                         options = pathOptions(interactive = FALSE))
                       
                       }
         )

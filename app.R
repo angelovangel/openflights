@@ -22,6 +22,8 @@ library(data.table)
 load("data/airports.Rdata")
 load("data/airlines.Rdata")
 load("data/routes.Rdata")
+load("data/countries.Rdata")
+load("data/countries.bounds.Rdata")
 
 routes <- data.table(routes) # for faster filtering
 airports <- airports %>% filter(!is.na(IATA))
@@ -105,14 +107,14 @@ server <- function(input, output, session) {
   output$map <- renderLeaflet({
     
     drawbasemap()
-    
   })
   
   # observers ##############################
   # draw main circles, eventually this function can be extended to change the sizes according to, for example, airline selected
   observe({
-    if(is.null(input$airline))
+    #if(is.null(input$airline))
     drawMainCircles(size = ~n*100)
+    drawCountries()
   })
   
   # the clickdata reactive stores clicked airports, I am using it like this because I want to set it to NULL whenever needed (e.g. when clearall or when airline is selcted)
@@ -124,6 +126,8 @@ server <- function(input, output, session) {
   # if clearall is pressed, set clickdata$click to NULL
   observeEvent(input$clearall, {
     clickdata$click <- NULL
+    leafletProxy("map") %>%
+      flyToBounds(lng1 = -180, lat1 = -85, lng2 = 180, lat2 = 85)
     print(clickdata$click)
   })
   
@@ -132,6 +136,9 @@ server <- function(input, output, session) {
     event <- clickdata$click
     if(is.null(event))
       return()
+    if(event$group == "countries")
+      leafletProxy("map", data = countries.bounds[countries.bounds$country == event$id, ]) %>%
+        flyToBounds(lng1 = ~lng1, lat1 = ~lat1, lng2 = ~lng2, lat2 = ~lat2)
     
     isolate({
       ifelse(input$radio == 2,
@@ -153,17 +160,21 @@ server <- function(input, output, session) {
   })
   
   
-  #observer to print clicked airport or airline info
-  observe({
+  #observer to print clicked airport or airline info, renderText is an observer already
+  #observe({
   output$airportSummary <- renderText({
      event <- clickdata$click
-     ifelse(!is.null(input$airline),
-             showAirlineInfo(x = last(input$airline), filters = event$id),
-               showAirportInfo(event$id)
-     )
- 
+     
+     if(!is.null(input$airline))
+        return(showAirlineInfo(x = last(input$airline), filters = event$id))
+     if(is.null(event))
+       return(paste0("Click on an airport on the map or select an airline to see the routes"))
+     if(event$group == "mainCircles")
+        return(showAirportInfo(event$id))
+     if(event$group == "countries")
+       return(paste0(event$id)) 
     })
-  })
+  #})
   
   #observer to clear all routes and airlines selections when the clear button is clicked
   observe({

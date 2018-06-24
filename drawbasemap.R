@@ -2,7 +2,7 @@
 drawbasemap <- function() {
  
   leaflet(options = leafletOptions(zoomControl = FALSE,  # these options are just for fun and to test if they are working in R
-                                   minZoom = 3, 
+                                   minZoom = 2, 
                                    maxZoom = 10, 
                                    zoomDelta = 0.5, 
                                    zoomSnap = 0.5, 
@@ -25,6 +25,26 @@ drawMainCircles <- function(size) {
                 radius = size, # is there a better, non-linear scaling?
                 fillOpacity = 0.6,
                 label = ~paste0(Name, " (", Country, ") ", n, " routes"),
-                options = pathOptions(pane = "oldcircles")
+                labelOptions = labelOptions(textsize = "14px"),
+                options = pathOptions(pane = "oldcircles"),
+                highlightOptions = highlightOptions(bringToFront = TRUE, fillColor = "orange",  fillOpacity = 0.8)
    )
 }
+
+# function for countries polygons 
+drawCountries <- function() {
+    leafletProxy("map", data = countries) %>%
+      addPolygons(group = "countries",
+                  layerId = ~name,
+                  label = ~name,
+                  labelOptions = labelOptions(textsize = "14px",
+                                              direction = "top",
+                                              textOnly = T, 
+                                              style = list("color" = "grey")),
+                  stroke = FALSE,
+                  fillColor = "black",
+                  fillOpacity = 0.1,
+                  highlightOptions = highlightOptions(fillColor = "white"))
+    
+  }
+

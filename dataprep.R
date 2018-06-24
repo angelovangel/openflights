@@ -1,6 +1,9 @@
 # data preparation helper
 # run these only if newer data is available from openflights.org
 library(RCurl)
+library(rgdal)
+library(raster) # conflicts with data.table, so unload
+
 airportspath <- "https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat"
 airlinespath <- "https://raw.githubusercontent.com/jpatokal/openflights/master/data/airlines.dat"
 routespath <- "https://raw.githubusercontent.com/jpatokal/openflights/master/data/routes.dat"
@@ -26,5 +29,15 @@ save(airports, file = "data/airports.Rdata")
 save(airlines, file = "data/airlines.Rdata")
 save(routes, file = "data/routes.Rdata")
 
+### process countries polygons
+countries <- readOGR("data/countries.geo.json", layer = "OGRGeoJSON")
+save(countries, file = "data/countries.Rdata")
 
-
+# get min and max coords for fitBounds, using raster::extent
+ext <- t(sapply(1:length(countries), function(i) as.vector(extent(countries[i, ]))))
+countries.bounds <- data.frame(country = countries$name, 
+                               lng1 = ext[ ,1], 
+                               lat1 = ext[ ,3],
+                               lng2 = ext[ ,2],
+                               lat2 = ext[ ,4])
+save(countries.bounds, file = "data/countries.bounds.Rdata")
