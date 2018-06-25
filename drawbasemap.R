@@ -27,7 +27,7 @@ drawMainCircles <- function(size) {
                 label = ~paste0(Name, " (", Country, ") ", n, " routes"),
                 labelOptions = labelOptions(textsize = "14px"),
                 options = pathOptions(pane = "oldcircles"),
-                highlightOptions = highlightOptions(bringToFront = TRUE, fillColor = "orange",  fillOpacity = 0.8)
+                highlightOptions = highlightOptions(bringToFront = FALSE, fillColor = "orange",  fillOpacity = 0.8) #bringToFront is false, so that overlapping circles can be clicked
    )
 }
 
