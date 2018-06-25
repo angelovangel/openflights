@@ -168,7 +168,7 @@ server <- function(input, output, session) {
      if(!is.null(input$airline))
         return(showAirlineInfo(x = last(input$airline), filters = event$id))
      if(is.null(event))
-       return(paste0("Click on an airport on the map or select an airline to see the routes"))
+       return(paste0("Click on a country, on an airport, or select an airline to see the routes"))
      if(event$group == "mainCircles")
         return(showAirportInfo(event$id))
      if(event$group == "countries")

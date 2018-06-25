@@ -2,8 +2,8 @@
 drawbasemap <- function() {
  
   leaflet(options = leafletOptions(zoomControl = FALSE,  # these options are just for fun and to test if they are working in R
-                                   minZoom = 2, 
-                                   maxZoom = 10, 
+                                   minZoom = 2.5, 
+                                   maxZoom = 11, 
                                    zoomDelta = 0.5, 
                                    zoomSnap = 0.5, 
                                    worldCopyJump = T)) %>% 
