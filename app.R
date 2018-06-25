@@ -3,7 +3,7 @@
 # 
 
 ##check if required packages are there and suggest install if not
-packages <- c("shiny", "tidyverse", "devtools", "leaflet", "leaflet.extras", "colorspace")
+packages <- c("shiny", "tidyverse", "devtools", "leaflet", "leaflet.extras", "colorspace", "data.table", "gdata")
 lapply(packages, function(x) if(!require(x, character.only = TRUE)) install.packages(x))
 
 # leaflet has to be devel version
