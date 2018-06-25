@@ -29,6 +29,11 @@ save(airports, file = "data/airports.Rdata")
 save(airlines, file = "data/airlines.Rdata")
 save(routes, file = "data/routes.Rdata")
 
+### pre-calculate routes for top50 airlines
+top50AirlineRoutes <- map_df(top50airlines$IATA, airlinesx)
+save(top50AirlineRoutes, file = "data/top50AirlinesRoutes.Rdata")
+
+
 ### process countries polygons
 countries <- readOGR("data/countries.geo.json", layer = "OGRGeoJSON")
 save(countries, file = "data/countries.Rdata")

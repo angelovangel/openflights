@@ -171,7 +171,9 @@ drawroutesAirportKeep <- function(x, filters) {
   
 drawroutesAirlines <- function(x) {
   # 
-  datax <- airlinesx(x)
+  #datax <- airlinesx(x)
+  #try here to use the pre-calculated routes
+  datax <- top50AirlineRoutes[top50AirlineRoutes$Airline %in% x, ]
   splitdf <- split(datax, datax$Airline)
   colors <- terrain_hcl(length(splitdf), alpha = 0.8)
   # dataforCircles <- airports.info.destination[airports.info.destination$Airline %in% x, ] %>% 

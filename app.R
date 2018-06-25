@@ -1,6 +1,6 @@
 # leaflet map vizualisation of the openflights.org data
 # includes airports, airlines and routes (no schedules)
-# 
+# todo - try using icao for airlines, more precise...###############################
 
 ##check if required packages are there and suggest install if not
 packages <- c("shiny", "tidyverse", "devtools", "leaflet", "leaflet.extras", "colorspace", "data.table", "gdata")
@@ -22,6 +22,7 @@ library(data.table)
 load("data/airports.Rdata")
 load("data/airlines.Rdata")
 load("data/routes.Rdata")
+load("data/top50AirlinesRoutes.Rdata")
 load("data/countries.Rdata")
 load("data/countries.bounds.Rdata")
 
@@ -60,7 +61,7 @@ top50airlines <- airlines %>%
                   left_join(routes, by = "Airline_ID") %>% 
                   group_by(Name, IATA, ICAO) %>% 
                   summarise(n = n()) %>% arrange(desc(n)) %>% head(50)
-top50List <- top50airlines$IATA
+#top50List <- top50airlines$IATA
 
 # UI
 ##############################################################################################
