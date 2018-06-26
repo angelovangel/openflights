@@ -55,7 +55,7 @@ showAirportInfo <- function(x) {
   ncountries <- selected %>% count(Country) %>% nrow()
   nairlines <- selected %>% count(Airline) %>% nrow()
   
-  paste0(tags$h4(tags$b(name)), tags$br(),
+  paste0(tags$span(style = "color: orange", tags$h4(tags$b(name))), tags$br(),
          tags$b(nroutes), " routes to", tags$br(), 
          tags$b(ncities), " cities in", tags$br(),
          tags$b(ncountries), " countries, operated by", tags$br(),
@@ -74,15 +74,23 @@ showAirlineInfo <- function(x, filters) {
     nroutes <- nrow(selected)
     ncities <- selected %>% count(City) %>% nrow()
     ncountries <- selected %>% count(Country) %>% nrow()
-    name <- selected$Name[1]
-    airportname <- airports[airports$IATA == filters, ]$Name # get the full name using the IATA code
-    #tags$span(style = paste("color:", col), word)
+    name <- airlines[airlines$IATA == x, ]$Name
+    # different text output depending if airport is clicked (the filters argument)
+    ifelse(!is.null(filters),
+      {sourceairport <- airports[airports$IATA == filters, ]$Name}, # get the full name using the IATA code
+      {n <- selected %>% count(Source_airport) %>% nrow()
+      sourceairport <- paste0(n, " airports")}
+      )
     
-    paste0(tags$h4(tags$b(name)), tags$br(),
+    #tags$span(style = paste("color:", col), word)
+    if(nrow(selected) == 0) 
+      return(paste0(tags$h4(tags$b(name)), tags$br(), "has no flights from ", tags$br(), tags$b(sourceairport))
+      )
+    paste0(tags$span(style = "color: orange", tags$h4(tags$b(name))), tags$br(),
                 tags$b(nroutes), " routes from ", tags$br(),
-                tags$b(airportname), " to ", tags$br(),
+                tags$b(sourceairport), " to ", tags$br(),
                 tags$b(ncities), " cities in", tags$br(),
-                tags$span(style = "color: red", tags$b(ncountries), " countries")) # this is working to change color
+                tags$b(ncountries), " countries") # this is working to change color
 }
   
   

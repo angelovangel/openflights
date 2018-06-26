@@ -132,7 +132,7 @@ server <- function(input, output, session) {
     print(clickdata$click)
   })
   
-  # observers to draw routes when airport is clicked or airline is selected
+  # observers to zoom to country, draw routes when airport is clicked or airline is selected
   observe({
     event <- clickdata$click
     if(is.null(event))
