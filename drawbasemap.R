@@ -23,7 +23,7 @@ drawMainCircles <- function(size) {
                 fillColor = "white",
                 #weight = 30,
                 radius = size, # is there a better, non-linear scaling?
-                fillOpacity = 0.6,
+                fillOpacity = 0.7,
                 label = ~paste0(Name, " (", Country, ") ", n, " routes"),
                 labelOptions = labelOptions(textsize = "14px"),
                 options = pathOptions(pane = "oldcircles"),
