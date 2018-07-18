@@ -114,7 +114,7 @@ server <- function(input, output, session) {
   # draw main circles, eventually this function can be extended to change the sizes according to, for example, airline selected
   observe({
     #if(is.null(input$airline))
-    drawMainCircles(size = ~n*100)
+    drawMainCircles(size = ~(n*100) + 3000) # this makes the small airports (with few routes) at least 3km in size so they are better to see
     drawCountries()
   })
   
