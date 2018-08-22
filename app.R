@@ -26,8 +26,8 @@ load("data/top50AirlinesRoutes.Rdata")
 load("data/countries.Rdata")
 load("data/countries.bounds.Rdata")
 
-routes <- data.table(routes) # for faster filtering
-airports <- airports %>% filter(!is.na(IATA))
+routes <- setDT(routes) # for faster filtering
+airports <- airports %>% filter(!is.na(IATA)) %>% setDT()
 
 source("global.R", local = TRUE) # contains the functions routesx, airlinesx, drawroutesAirportClear and drawroutesAirportKeep
 source("drawbasemap.R", local = TRUE) # the function to draw the base map, which is the tiles and the airports
