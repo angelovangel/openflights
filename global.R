@@ -1,7 +1,7 @@
 # helper functions for the airports app
 # the routesx and airlinesx functions give interleaved df with the routes, the x argument is an airport or an airline (IATA code)
 
-# get the routes from an airport
+#### get the routes from an airport ####
 routesx <- function(x) {
   
   routesx <- routes[Source_airport == x, ]
@@ -22,7 +22,7 @@ routesx <- function(x) {
   
 }
 
-# get the routes an airline flies
+#### get the routes an airline flies ####
 airlinesx <- function(x) {
   routesx <- routes[Airline %in% x, ]
   
@@ -43,7 +43,7 @@ airlinesx <- function(x) {
   
 }
 
-# function to print airports info (click events)
+#### function to print airports info (click events) ####
 showAirportInfo <- function(x) {
   if(is.null(x))
     return(paste0("Click on an airport or select an airline to see info"))
@@ -62,7 +62,7 @@ showAirportInfo <- function(x) {
          tags$b(nairlines), " airlines")
 }
 
-# function to print Airline info
+#### function to print Airline info ####
 showAirlineInfo <- function(x, filters) {
   if(is.null(x))
     return(paste0("Click on an airport on the map or select an airline to see the routes"))
@@ -93,7 +93,7 @@ showAirlineInfo <- function(x, filters) {
                 tags$b(ncountries), " countries") # this is working to change color
 }
   
-  
+#### draw routes from airports (clear mode) ####
 drawroutesAirportClear <- function(x, filters) {
   if(is.null(filters))
     dataforPolylines <- routesx(x) else {
@@ -136,6 +136,7 @@ drawroutesAirportClear <- function(x, filters) {
   
 }
 
+#### draw routes from airports (keep mode) ####
 drawroutesAirportKeep <- function(x, filters) {
   if(is.null(filters))
     dataforPolylines <- routesx(x) else {
