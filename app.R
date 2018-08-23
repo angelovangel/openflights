@@ -17,6 +17,7 @@ library(tidyverse)
 library(leaflet)
 library(leaflet.extras)
 library(data.table)
+library(threejs) # for 3d globe projection
 
 # the data processing steps are in the dataprep.R file, which can be executed when new data becomes available
 load("data/airports.Rdata")
@@ -91,6 +92,7 @@ ui <- bootstrapPage(
                 h5(radioButtons("radio", label = "Routes selection mode",
                              choices = list("Keep routes" = 1, "Clear routes" = 2), selected = 2),
                    actionButton("clearall", "Clear all routes"),
+                   actionButton("3Dview", "3D view"),
                              style = "color:grey;")
                 )
 )
