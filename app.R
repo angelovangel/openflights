@@ -195,7 +195,7 @@ server <- function(input, output, session) {
       left_join(airports[, .(IATA, Latitude, Longitude)], by = c("Source_airport" = "IATA")) %>% 
       left_join(airports[, .(IATA, Latitude, Longitude)], by = c("Destination_airport" = "IATA"))
     
-   
+   #
      showModal(modalDialog(size = "l", easyClose = TRUE, #footer = "",
                            
       renderGlobe(
