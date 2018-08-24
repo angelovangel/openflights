@@ -88,11 +88,11 @@ ui <- bootstrapPage(
                    style = "color:grey;")
   ),
   
-  absolutePanel(bottom = 15, left = 5, width = "15%",
+  absolutePanel(bottom = 15, left = 5, width = "20%",
                 h5(radioButtons("radio", label = "Routes selection mode",
                              choices = list("Keep routes" = 1, "Clear routes" = 2), selected = 2),
                    actionButton("clearall", "Clear all routes"),
-                   actionButton("3Dview", "3D view"),
+                   actionButton("globe", "3D view"),
                              style = "color:grey;")
                 )
 )
@@ -187,6 +187,33 @@ server <- function(input, output, session) {
       clearGroup("routes1") %>%
       clearGroup("routes2") %>%
       clearGroup("routes3")
+  })
+  
+  #### 3d plot ####
+  observeEvent(input$globe, {
+    df <- routes[Airline %in% input$airline, .(Source_airport, Destination_airport)] %>% 
+      left_join(airports[, .(IATA, Latitude, Longitude)], by = c("Source_airport" = "IATA")) %>% 
+      left_join(airports[, .(IATA, Latitude, Longitude)], by = c("Destination_airport" = "IATA"))
+    
+   
+     showModal(modalDialog(size = "l", easyClose = TRUE, #footer = "",
+                           
+      renderGlobe(
+       globejs(arcs = df[ , 3:6], 
+               arcsColor = "orange",
+               arcsLwd = 0.1,
+               arcsHeight = 0.4,
+               arcsOpacity = 0.2,
+               img = "data/dnb_land_ocean_ice.2012.3600x1800.jpg", 
+               bg = "black",
+               bodycolor = "green", 
+               emissive = "#191919",
+               fov = 30,
+               rotationlong = -1.7,
+               rotationlat = 0.4)
+      )
+      
+    ))
   })
   
   
