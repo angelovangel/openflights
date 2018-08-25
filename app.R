@@ -64,8 +64,8 @@ top50airlines <- airlines %>%
                   summarise(n = n()) %>% arrange(desc(n)) %>% head(50)
 #top50List <- top50airlines$IATA
 
-# UI
-##############################################################################################
+#### UI ####
+
 ui <- bootstrapPage(
   
   tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
@@ -106,13 +106,13 @@ server <- function(input, output, session) {
   session$onSessionEnded(function() {
     stopApp()
   })
-  
+  #### main map ####
   output$map <- renderLeaflet({
     
     drawbasemap()
   })
   
-  # observers ##############################
+  #### observers ##############################
   # draw main circles, eventually this function can be extended to change the sizes according to, for example, airline selected
   observe({
     #if(is.null(input$airline))
@@ -121,6 +121,7 @@ server <- function(input, output, session) {
   })
   
   # the clickdata reactive stores clicked airports, I am using it like this because I want to set it to NULL whenever needed (e.g. when clearall or when airline is selcted)
+  #### clickdata define ####
   clickdata <- reactiveValues(click = NULL)
   observeEvent(input$map_shape_click, {
     clickdata$click <- input$map_shape_click
@@ -189,7 +190,7 @@ server <- function(input, output, session) {
       clearGroup("routes3")
   })
   
-  #### 3d plot ####
+  #### 3d plot, in a modal ####
   observeEvent(input$globe, {
     df <- routes[Airline %in% input$airline, .(Source_airport, Destination_airport)] %>% 
       left_join(airports[, .(IATA, Latitude, Longitude)], by = c("Source_airport" = "IATA")) %>% 
