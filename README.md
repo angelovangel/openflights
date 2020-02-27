@@ -1,6 +1,9 @@
 # openflights
 A leaflet map with the openflights.org data
 
+### Demo
+![demo](demo/demo.gif)
+
 ### How to use
 
 ```r
